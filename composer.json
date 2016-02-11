@@ -12,6 +12,9 @@
             "Phlib\\Encrypt\\": "src"
         }
     },
+    "require": {
+        "php" : ">=5.5.0",
+    },
     "require-dev": {
         "phpunit/phpunit": "4.7.*"
     },
