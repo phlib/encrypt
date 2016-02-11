@@ -3,6 +3,15 @@
 namespace Phlib\Encrypt\Encryptor;
 
 if (!function_exists('hash_equals')) {
+    /**
+     * hash_equals
+     *
+     * This function was introduced in PHP 5.6, this is provided as a backfill for earlier PHP versions
+     *
+     * @param string $a
+     * @param string $b
+     * @return bool
+     */
     function hash_equals($a, $b) {
         $key = openssl_random_pseudo_bytes(16);
         return hash_hmac('sha256', $a, $key) === hash_hmac('sha256', $b, $key);
