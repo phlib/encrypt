@@ -1,5 +1,7 @@
 # phlib/encrypt
 
+[![Build Status](https://img.shields.io/travis/phlib/encrypt/master.svg?style=flat-square)](https://travis-ci.org/phlib/encrypt)
+
 PHP encryption/decryption tool
 
 ## Usage
