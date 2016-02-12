@@ -18,6 +18,44 @@ if (!function_exists('hash_equals')) {
     }
 }
 
+if (!function_exists('hash_pbkdf2')) {
+    /**
+     * Generate a PBKDF2 key derivation of a supplied password
+     *
+     * This is a polyfill to account for pre-PHP5.5 versions
+     * Implementation taken from http://stackoverflow.com/a/5093422/1602850
+     * Modified to implement the $raw_output behaviour
+     *
+     * @link http://php.net/manual/en/function.hash-pbkdf2.php
+     * @param $algo
+     * @param $password
+     * @param $salt
+     * @param $iterations
+     * @param $length [optional]
+     * @param $raw_output [optional]
+     * @return mixed a string containing the derived key as lowercase hexits unless
+     * <i>raw_output</i> is set to <b>TRUE</b> in which case the raw
+     * binary representation of the derived key is returned.
+     * @since 5.5.0
+     */
+    function hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output) {
+        $size   = strlen(hash($algo, '', true));
+        $len    = ceil($length / $size);
+        $result = '';
+        for ($i = 1; $i <= $len; $i++) {
+            $tmp = hash_hmac($algo, $salt . pack('N', $i), $password, true);
+            $res = $tmp;
+            for ($j = 1; $j < $iterations; $j++) {
+                 $tmp  = hash_hmac($algo, $tmp, $password, true);
+                 $res ^= $tmp;
+            }
+            $result .= $res;
+        }
+        $result = substr($result, 0, $length);
+        return $raw_output ? $result : bin2hex($result);
+    }
+}
+
 use Phlib\Encrypt\EncryptorInterface;
 use Phlib\Encrypt\InvalidArgumentException;
 use Phlib\Encrypt\RuntimeException;
