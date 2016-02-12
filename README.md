@@ -1,8 +1,19 @@
 # phlib/encrypt
 
 [![Build Status](https://img.shields.io/travis/phlib/encrypt/master.svg?style=flat-square)](https://travis-ci.org/phlib/encrypt)
+[![Latest Stable Version](https://img.shields.io/packagist/v/phlib/encrypt.svg?style=flat-square)](https://packagist.org/packages/phlib/encrypt)
+[![Total Downloads](https://img.shields.io/packagist/dt/phlib/encrypt.svg?style=flat-square)](https://packagist.org/packages/phlib/encrypt)
 
 PHP encryption/decryption tool
+
+
+## Install
+
+Via Composer
+
+``` bash
+$ composer require phlib/encrypt
+```
 
 ## Usage
 
