@@ -4,17 +4,19 @@ namespace Phlib\Encrypt\Encryptor;
 
 if (!function_exists('hash_equals')) {
     /**
-     * hash_equals
+     * Timing attack safe string comparison
      *
-     * This function was introduced in PHP 5.6, this is provided as a backfill for earlier PHP versions
+     * This is a polyfill to account for pre-PHP5.6 versions
      *
-     * @param string $a
-     * @param string $b
-     * @return bool
+     * @link http://php.net/manual/en/function.hash-equals.php
+     * @param string $known_string <p>The string of known length to compare against</p>
+     * @param string $user_string <p>The user-supplied string</p>
+     * @return boolean <p>Returns <b>TRUE</b> when the two strings are equal, <b>FALSE</b> otherwise.</p>
+     * @since 5.6.0
      */
-    function hash_equals($a, $b) {
+    function hash_equals($known_string, $user_string) {
         $key = openssl_random_pseudo_bytes(16);
-        return hash_hmac('sha256', $a, $key) === hash_hmac('sha256', $b, $key);
+        return hash_hmac('sha256', $known_string, $key) === hash_hmac('sha256', $user_string, $key);
     }
 }
 
