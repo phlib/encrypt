@@ -15,7 +15,7 @@ if (!function_exists('hash_equals')) {
      * @since 5.6.0
      */
     function hash_equals($known_string, $user_string) {
-        $key = openssl_random_pseudo_bytes(16);
+        $key = random_bytes(16);
         return hash_hmac('sha256', $known_string, $key) === hash_hmac('sha256', $user_string, $key);
     }
 }
@@ -103,8 +103,8 @@ class OpenSsl implements EncryptorInterface
      */
     public function encrypt($data)
     {
-        $salt = openssl_random_pseudo_bytes($this->saltLength);
-        $iv   = openssl_random_pseudo_bytes($this->ivLength);
+        $salt = random_bytes($this->saltLength);
+        $iv   = random_bytes($this->ivLength);
         $key  = hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, 0, true);
 
         $encryptedData = openssl_encrypt($data, $this->cipherMethod, $key, OPENSSL_RAW_DATA, $iv);
