@@ -85,6 +85,7 @@ class OpenSsl implements EncryptorInterface
     protected $saltLength = 8;
     protected $ivLength   = null; // dependant on cipher method
     protected $macLength  = 32;   // strlen(hash_hmac('sha256', '', '', true))
+    protected $keyLength  = 16;   // 128 bits
 
     /**
      * OpenSsl constructor
@@ -105,10 +106,11 @@ class OpenSsl implements EncryptorInterface
     {
         $salt = random_bytes($this->saltLength);
         $iv   = random_bytes($this->ivLength);
-        $key  = hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, 0, true);
 
-        $encryptedData = openssl_encrypt($data, $this->cipherMethod, $key, OPENSSL_RAW_DATA, $iv);
-        $mac = hash_hmac('sha256', $encryptedData . $iv, $key, true);
+        list($encKey, $authKey) = $this->deriveKeys($salt);
+
+        $encryptedData = openssl_encrypt($data, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
+        $mac = hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
 
         return $salt . $iv . $mac . $encryptedData;
     }
@@ -127,20 +129,34 @@ class OpenSsl implements EncryptorInterface
         $mac           = substr($data, $this->saltLength + $this->ivLength, $this->macLength);
         $encryptedData = substr($data, $this->saltLength + $this->ivLength + $this->macLength);
 
-        $key = hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, 0, true);
-        $calculatedMac = hash_hmac('sha256', $encryptedData . $iv, $key, true);
+        list($encKey, $authKey) = $this->deriveKeys($salt);
+
+        $calculatedMac = hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
 
         if (!hash_equals($calculatedMac, $mac)) {
             throw new RuntimeException('HMAC failed to match');
         }
 
-        $decryptedData = openssl_decrypt($encryptedData, $this->cipherMethod, $key, OPENSSL_RAW_DATA, $iv);
+        $decryptedData = openssl_decrypt($encryptedData, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
 
         if ($decryptedData === false) {
             throw new RuntimeException('Failed to decrypt data');
         }
 
         return $decryptedData;
+    }
+
+    /**
+     * Derive the keys for encryption and authentication using the given salt, and the password
+     *
+     * @param string $salt
+     * @return array
+     */
+    protected function deriveKeys($salt)
+    {
+        $key = hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, $this->keyLength * 2, true);
+
+        return str_split($key, $this->keyLength);
     }
 
 }
