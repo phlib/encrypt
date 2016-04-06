@@ -40,8 +40,11 @@ if (!function_exists('hash_pbkdf2')) {
      * binary representation of the derived key is returned.
      * @since 5.5.0
      */
-    function hash_pbkdf2($algo, $password, $salt, $iterations, $length, $raw_output) {
+    function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = false) {
         $size   = strlen(hash($algo, '', true));
+        if ($length === 0) {
+            $length = $size;
+        }
         $len    = ceil($length / $size);
         $result = '';
         for ($i = 1; $i <= $len; $i++) {
