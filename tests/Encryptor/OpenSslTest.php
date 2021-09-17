@@ -82,4 +82,18 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
 
         $this->encryptor->decrypt($encryptedModified);
     }
+
+    /**
+     * @expectedException \Phlib\Encrypt\RuntimeException
+     * @expectedExceptionMessage Failed to decrypt data
+     */
+    public function testDecryptFailsWithUnencryptedData()
+    {
+        // This data has been built using correct HMAC, but the original data was not encrpyted
+        // HMAC will pass, but openssl_decrypt() will fail
+        $base64 = 'VzqOJoRMXkXT/1g3mZQ712LHXNKg5sIiVgB4zQZffOD3XOtW0yEOoRHcGheVbPMeC8N9TKRyKh1UaGlzIGRhdGEgaXMgbm90IGVuY3J5cHRlZA==';
+        $notEncrypted = base64_decode($base64);
+
+        $this->encryptor->decrypt($notEncrypted);
+    }
 }
