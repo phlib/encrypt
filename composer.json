@@ -17,12 +17,12 @@
         }
     },
     "require": {
-        "php" : ">=5.4.0",
+        "php" : "^5.4 || ^7",
         "lib-openssl": "*",
         "paragonie/random_compat": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.7.*"
+        "phpunit/phpunit": "^4"
     },
     "autoload-dev": {
         "psr-4": {
