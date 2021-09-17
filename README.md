@@ -1,9 +1,9 @@
 # phlib/encrypt
 
-[![Build Status](https://img.shields.io/travis/phlib/encrypt/master.svg?style=flat-square)](https://travis-ci.org/phlib/encrypt)
-[![Codecov](https://img.shields.io/codecov/c/github/phlib/encrypt.svg)](https://codecov.io/gh/phlib/encrypt)
-[![Latest Stable Version](https://img.shields.io/packagist/v/phlib/encrypt.svg?style=flat-square)](https://packagist.org/packages/phlib/encrypt)
-[![Total Downloads](https://img.shields.io/packagist/dt/phlib/encrypt.svg?style=flat-square)](https://packagist.org/packages/phlib/encrypt)
+[![Code Checks](https://img.shields.io/github/workflow/status/phlib/encrypt/CodeChecks?logo=github)](https://github.com/phlib/encrypt/actions/workflows/code-checks.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/phlib/encrypt.svg?logo=codecov)](https://codecov.io/gh/phlib/encrypt)
+[![Latest Stable Version](https://img.shields.io/packagist/v/phlib/encrypt.svg?logo=packagist)](https://packagist.org/packages/phlib/encrypt)
+[![Total Downloads](https://img.shields.io/packagist/dt/phlib/encrypt.svg?logo=packagist)](https://packagist.org/packages/phlib/encrypt)
 ![Licence](https://img.shields.io/github/license/phlib/encrypt.svg)
 
 PHP encryption/decryption tool
