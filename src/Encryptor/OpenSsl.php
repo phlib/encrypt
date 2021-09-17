@@ -15,8 +15,8 @@ if (!function_exists('hash_equals')) {
      * @since 5.6.0
      */
     function hash_equals($known_string, $user_string) {
-        $key = random_bytes(16);
-        return hash_hmac('sha256', $known_string, $key) === hash_hmac('sha256', $user_string, $key);
+        $key = \random_bytes(16);
+        return \hash_hmac('sha256', $known_string, $key) === hash_hmac('sha256', $user_string, $key);
     }
 }
 
@@ -41,23 +41,23 @@ if (!function_exists('hash_pbkdf2')) {
      * @since 5.5.0
      */
     function hash_pbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = false) {
-        $size   = strlen(hash($algo, '', true));
+        $size   = \strlen(hash($algo, '', true));
         if ($length === 0) {
             $length = $size;
         }
-        $len    = ceil($length / $size);
+        $len    = \ceil($length / $size);
         $result = '';
         for ($i = 1; $i <= $len; $i++) {
-            $tmp = hash_hmac($algo, $salt . pack('N', $i), $password, true);
+            $tmp = \hash_hmac($algo, $salt . pack('N', $i), $password, true);
             $res = $tmp;
             for ($j = 1; $j < $iterations; $j++) {
-                 $tmp  = hash_hmac($algo, $tmp, $password, true);
+                 $tmp  = \hash_hmac($algo, $tmp, $password, true);
                  $res ^= $tmp;
             }
             $result .= $res;
         }
-        $result = substr($result, 0, $length);
-        return $raw_output ? $result : bin2hex($result);
+        $result = \substr($result, 0, $length);
+        return $raw_output ? $result : \bin2hex($result);
     }
 }
 
@@ -98,7 +98,7 @@ class OpenSsl implements EncryptorInterface
     public function __construct($password)
     {
         $this->password = $password;
-        $this->ivLength = openssl_cipher_iv_length($this->cipherMethod);
+        $this->ivLength = \openssl_cipher_iv_length($this->cipherMethod);
     }
 
     /**
@@ -107,13 +107,13 @@ class OpenSsl implements EncryptorInterface
      */
     public function encrypt($data)
     {
-        $salt = random_bytes($this->saltLength);
-        $iv   = random_bytes($this->ivLength);
+        $salt = \random_bytes($this->saltLength);
+        $iv   = \random_bytes($this->ivLength);
 
         list($encKey, $authKey) = $this->deriveKeys($salt);
 
-        $encryptedData = openssl_encrypt($data, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
-        $mac = hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
+        $encryptedData = \openssl_encrypt($data, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
+        $mac = \hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
 
         return $salt . $iv . $mac . $encryptedData;
     }
@@ -124,23 +124,23 @@ class OpenSsl implements EncryptorInterface
      */
     public function decrypt($data)
     {
-        if (strlen($data) < $this->saltLength + $this->ivLength + $this->macLength) {
+        if (\strlen($data) < $this->saltLength + $this->ivLength + $this->macLength) {
             throw new InvalidArgumentException('Data is not valid for decryption');
         }
-        $salt          = substr($data, 0, $this->saltLength);
-        $iv            = substr($data, $this->saltLength, $this->ivLength);
-        $mac           = substr($data, $this->saltLength + $this->ivLength, $this->macLength);
-        $encryptedData = substr($data, $this->saltLength + $this->ivLength + $this->macLength);
+        $salt          = \substr($data, 0, $this->saltLength);
+        $iv            = \substr($data, $this->saltLength, $this->ivLength);
+        $mac           = \substr($data, $this->saltLength + $this->ivLength, $this->macLength);
+        $encryptedData = \substr($data, $this->saltLength + $this->ivLength + $this->macLength);
 
         list($encKey, $authKey) = $this->deriveKeys($salt);
 
-        $calculatedMac = hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
+        $calculatedMac = \hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
 
         if (!hash_equals($calculatedMac, $mac)) {
             throw new RuntimeException('HMAC failed to match');
         }
 
-        $decryptedData = openssl_decrypt($encryptedData, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
+        $decryptedData = \openssl_decrypt($encryptedData, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
 
         if ($decryptedData === false) {
             throw new RuntimeException('Failed to decrypt data');
@@ -159,7 +159,7 @@ class OpenSsl implements EncryptorInterface
     {
         $key = hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, $this->keyLength * 2, true);
 
-        return str_split($key, $this->keyLength);
+        return \str_split($key, $this->keyLength);
     }
 
 }

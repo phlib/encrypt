@@ -34,7 +34,7 @@ The same encryption password must be used to decrypt as was used to encrypt.
 Example of creating an encryption password
 
 ``` php 
-$encryptionPassword = openssl_random_pseudo_bytes(32);
+$encryptionPassword = \openssl_random_pseudo_bytes(32);
 
 ```
 
