@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   package. If an implementation has a use case which needs to override these
   members, please submit a pull request explaining the change.
 ### Removed
-- **BC break**: Removed support for PHP versions < v7.1 as they are no longer
+- **BC break**: Removed support for PHP versions <= v7.3 as they are no longer
   [actively supported](https://php.net/supported-versions.php) by the PHP project.
 
 ## [2.0.0] - 2016-04-06
