@@ -3,6 +3,8 @@
 namespace Phlib\Encrypt\Test\Encryptor;
 
 use Phlib\Encrypt\Encryptor\OpenSsl;
+use Phlib\Encrypt\InvalidArgumentException;
+use Phlib\Encrypt\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 class OpenSslTest extends TestCase
@@ -49,29 +51,26 @@ class OpenSslTest extends TestCase
         static::assertCount($numberOfEncryptions, $encrypted);
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\InvalidArgumentException
-     * @expectedExceptionMessage Data is not valid
-     */
     public function testDecryptFailsWithInsufficientData()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Data is not valid');
+
         $this->encryptor->decrypt('meugghhh');
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     */
     public function testDecryptFailsWithGarbage()
     {
+        $this->expectException(RuntimeException::class);
+
         $this->encryptor->decrypt(str_repeat('meugghhh', 20));
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     * @expectedExceptionMessage HMAC
-     */
     public function testDecryptFailsWithModifiedData()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('HMAC');
+
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
 
@@ -83,12 +82,11 @@ class OpenSslTest extends TestCase
         $this->encryptor->decrypt($encryptedModified);
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     * @expectedExceptionMessage Failed to decrypt data
-     */
     public function testDecryptFailsWithUnencryptedData()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to decrypt data');
+
         // This data has been built using correct HMAC, but the original data was not encrpyted
         // HMAC will pass, but openssl_decrypt() will fail
         $base64 = 'VzqOJoRMXkXT/1g3mZQ712LHXNKg5sIiVgB4zQZffOD3XOtW0yEOoRHcGheVbPMeC8N9TKRyKh1UaGlzIGRhdGEgaXMgbm90IGVuY3J5cHRlZA==';
