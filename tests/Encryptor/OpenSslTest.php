@@ -14,7 +14,7 @@ class OpenSslTest extends TestCase
     /**
      * @var OpenSsl
      */
-    protected $encryptor;
+    private $encryptor;
 
     protected function setUp(): void
     {

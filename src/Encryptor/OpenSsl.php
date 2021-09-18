@@ -8,57 +8,42 @@ use Phlib\Encrypt\EncryptorInterface;
 use Phlib\Encrypt\InvalidArgumentException;
 use Phlib\Encrypt\RuntimeException;
 
-class OpenSsl implements EncryptorInterface
+final class OpenSsl implements EncryptorInterface
 {
-    /**
-     * @var string
-     */
-    protected $password;
+    private const CIPHER_METHOD = 'aes-256-cbc';
+
+    private const PBKDF2_ITERATIONS = 50000;
+
+    private const SALT_LENGTH = 8;
+
+    private const MAC_LENGTH = 32; // strlen(hash_hmac('sha256', '', '', true))
+
+    private const KEY_LENGTH = 16; // 128 bits
 
     /**
      * @var string
      */
-    protected $cipherMethod = 'aes-256-cbc';
+    private $password;
 
     /**
      * @var int
      */
-    protected $pbkdf2Iterations = 50000;
-
-    /**
-     * @var int
-     */
-    protected $saltLength = 8;
-
-    /**
-     * @var int
-     */
-    protected $ivLength; // dependant on cipher method
-
-    /**
-     * @var int
-     */
-    protected $macLength = 32; // strlen(hash_hmac('sha256', '', '', true))
-
-    /**
-     * @var int
-     */
-    protected $keyLength = 16; // 128 bits
+    private $ivLength; // determined from cipher method
 
     public function __construct(string $password)
     {
         $this->password = $password;
-        $this->ivLength = \openssl_cipher_iv_length($this->cipherMethod);
+        $this->ivLength = \openssl_cipher_iv_length(self::CIPHER_METHOD);
     }
 
     public function encrypt(string $data): string
     {
-        $salt = \random_bytes($this->saltLength);
+        $salt = \random_bytes(self::SALT_LENGTH);
         $iv = \random_bytes($this->ivLength);
 
         [$encKey, $authKey] = $this->deriveKeys($salt);
 
-        $encryptedData = \openssl_encrypt($data, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
+        $encryptedData = \openssl_encrypt($data, self::CIPHER_METHOD, $encKey, OPENSSL_RAW_DATA, $iv);
         $mac = \hash_hmac('sha256', $encryptedData . $iv, $authKey, true);
 
         return $salt . $iv . $mac . $encryptedData;
@@ -66,13 +51,13 @@ class OpenSsl implements EncryptorInterface
 
     public function decrypt(string $data): string
     {
-        if (\strlen($data) < $this->saltLength + $this->ivLength + $this->macLength) {
+        if (\strlen($data) < self::SALT_LENGTH + $this->ivLength + self::MAC_LENGTH) {
             throw new InvalidArgumentException('Data is not valid for decryption');
         }
-        $salt = \substr($data, 0, $this->saltLength);
-        $iv = \substr($data, $this->saltLength, $this->ivLength);
-        $mac = \substr($data, $this->saltLength + $this->ivLength, $this->macLength);
-        $encryptedData = \substr($data, $this->saltLength + $this->ivLength + $this->macLength);
+        $salt = \substr($data, 0, self::SALT_LENGTH);
+        $iv = \substr($data, self::SALT_LENGTH, $this->ivLength);
+        $mac = \substr($data, self::SALT_LENGTH + $this->ivLength, self::MAC_LENGTH);
+        $encryptedData = \substr($data, self::SALT_LENGTH + $this->ivLength + self::MAC_LENGTH);
 
         [$encKey, $authKey] = $this->deriveKeys($salt);
 
@@ -82,7 +67,7 @@ class OpenSsl implements EncryptorInterface
             throw new RuntimeException('HMAC failed to match');
         }
 
-        $decryptedData = \openssl_decrypt($encryptedData, $this->cipherMethod, $encKey, OPENSSL_RAW_DATA, $iv);
+        $decryptedData = \openssl_decrypt($encryptedData, self::CIPHER_METHOD, $encKey, OPENSSL_RAW_DATA, $iv);
 
         if ($decryptedData === false) {
             throw new RuntimeException('Failed to decrypt data');
@@ -94,10 +79,10 @@ class OpenSsl implements EncryptorInterface
     /**
      * Derive the keys for encryption and authentication using the given salt, and the password
      */
-    protected function deriveKeys(string $salt): array
+    private function deriveKeys(string $salt): array
     {
-        $key = \hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, $this->keyLength * 2, true);
+        $key = \hash_pbkdf2('sha256', $this->password, $salt, self::PBKDF2_ITERATIONS, self::KEY_LENGTH * 2, true);
 
-        return \str_split($key, $this->keyLength);
+        return \str_split($key, self::KEY_LENGTH);
     }
 }
