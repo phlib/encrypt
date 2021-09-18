@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlib\Encrypt\Test\Encryptor;
 
 use Phlib\Encrypt\Encryptor\OpenSsl;
@@ -14,25 +16,25 @@ class OpenSslTest extends TestCase
      */
     protected $encryptor;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->encryptor = new OpenSsl('abc123');
     }
 
-    public function testEncryptReturnsNonEmptyString()
+    public function testEncryptReturnsNonEmptyString(): void
     {
         $encrypted = $this->encryptor->encrypt('shoop di whoop');
         static::assertNotEmpty($encrypted);
     }
 
-    public function testEncryptReturnsDifferentString()
+    public function testEncryptReturnsDifferentString(): void
     {
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         static::assertNotEquals($original, $encrypted);
     }
 
-    public function testDecryptReturnsOriginal()
+    public function testDecryptReturnsOriginal(): void
     {
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
@@ -40,7 +42,7 @@ class OpenSslTest extends TestCase
         static::assertEquals($original, $decrypted);
     }
 
-    public function testEncryptReturnsUniqueOnMultipleCalls()
+    public function testEncryptReturnsUniqueOnMultipleCalls(): void
     {
         $original = 'shoop di whoop';
         $encrypted = [];
@@ -51,7 +53,7 @@ class OpenSslTest extends TestCase
         static::assertCount($numberOfEncryptions, $encrypted);
     }
 
-    public function testDecryptFailsWithInsufficientData()
+    public function testDecryptFailsWithInsufficientData(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Data is not valid');
@@ -59,14 +61,14 @@ class OpenSslTest extends TestCase
         $this->encryptor->decrypt('meugghhh');
     }
 
-    public function testDecryptFailsWithGarbage()
+    public function testDecryptFailsWithGarbage(): void
     {
         $this->expectException(RuntimeException::class);
 
         $this->encryptor->decrypt(str_repeat('meugghhh', 20));
     }
 
-    public function testDecryptFailsWithModifiedData()
+    public function testDecryptFailsWithModifiedData(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('HMAC');
@@ -82,7 +84,7 @@ class OpenSslTest extends TestCase
         $this->encryptor->decrypt($encryptedModified);
     }
 
-    public function testDecryptFailsWithUnencryptedData()
+    public function testDecryptFailsWithUnencryptedData(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Failed to decrypt data');

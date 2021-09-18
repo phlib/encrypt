@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlib\Encrypt\Encryptor;
 
 use Phlib\Encrypt\EncryptorInterface;
@@ -43,22 +45,13 @@ class OpenSsl implements EncryptorInterface
      */
     protected $keyLength = 16; // 128 bits
 
-    /**
-     * OpenSsl constructor
-     *
-     * @param string $password
-     */
-    public function __construct($password)
+    public function __construct(string $password)
     {
         $this->password = $password;
         $this->ivLength = \openssl_cipher_iv_length($this->cipherMethod);
     }
 
-    /**
-     * @param string $data
-     * @return string
-     */
-    public function encrypt($data)
+    public function encrypt(string $data): string
     {
         $salt = \random_bytes($this->saltLength);
         $iv = \random_bytes($this->ivLength);
@@ -71,11 +64,7 @@ class OpenSsl implements EncryptorInterface
         return $salt . $iv . $mac . $encryptedData;
     }
 
-    /**
-     * @param string $data
-     * @return string
-     */
-    public function decrypt($data)
+    public function decrypt(string $data): string
     {
         if (\strlen($data) < $this->saltLength + $this->ivLength + $this->macLength) {
             throw new InvalidArgumentException('Data is not valid for decryption');
@@ -104,11 +93,8 @@ class OpenSsl implements EncryptorInterface
 
     /**
      * Derive the keys for encryption and authentication using the given salt, and the password
-     *
-     * @param string $salt
-     * @return array
      */
-    protected function deriveKeys($salt)
+    protected function deriveKeys(string $salt): array
     {
         $key = \hash_pbkdf2('sha256', $this->password, $salt, $this->pbkdf2Iterations, $this->keyLength * 2, true);
 
