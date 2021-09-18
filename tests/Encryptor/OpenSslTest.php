@@ -31,7 +31,7 @@ class OpenSslTest extends TestCase
     {
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
-        static::assertNotEquals($original, $encrypted);
+        static::assertNotSame($original, $encrypted);
     }
 
     public function testDecryptReturnsOriginal(): void
@@ -39,7 +39,7 @@ class OpenSslTest extends TestCase
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         $decrypted = $this->encryptor->decrypt($encrypted);
-        static::assertEquals($original, $decrypted);
+        static::assertSame($original, $decrypted);
     }
 
     public function testEncryptReturnsUniqueOnMultipleCalls(): void
@@ -92,7 +92,7 @@ class OpenSslTest extends TestCase
         // This data has been built using correct HMAC, but the original data was not encrpyted
         // HMAC will pass, but openssl_decrypt() will fail
         $base64 = 'VzqOJoRMXkXT/1g3mZQ712LHXNKg5sIiVgB4zQZffOD3XOtW0yEOoRHcGheVbPMeC8N9TKRyKh1UaGlzIGRhdGEgaXMgbm90IGVuY3J5cHRlZA==';
-        $notEncrypted = base64_decode($base64);
+        $notEncrypted = base64_decode($base64, true);
 
         $this->encryptor->decrypt($notEncrypted);
     }
