@@ -3,8 +3,9 @@
 namespace Phlib\Encrypt\Test\Encryptor;
 
 use Phlib\Encrypt\Encryptor\OpenSsl;
+use PHPUnit\Framework\TestCase;
 
-class OpenSslTest extends \PHPUnit_Framework_TestCase
+class OpenSslTest extends TestCase
 {
     /**
      * @var OpenSsl
@@ -19,14 +20,14 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
     public function testEncryptReturnsNonEmptyString()
     {
         $encrypted = $this->encryptor->encrypt('shoop di whoop');
-        $this->assertNotEmpty($encrypted);
+        static::assertNotEmpty($encrypted);
     }
 
     public function testEncryptReturnsDifferentString()
     {
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
-        $this->assertNotEquals($original, $encrypted);
+        static::assertNotEquals($original, $encrypted);
     }
 
     public function testDecryptReturnsOriginal()
@@ -34,7 +35,7 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
         $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         $decrypted = $this->encryptor->decrypt($encrypted);
-        $this->assertEquals($original, $decrypted);
+        static::assertEquals($original, $decrypted);
     }
 
     public function testEncryptReturnsUniqueOnMultipleCalls()
@@ -45,7 +46,7 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
         for ($i = 0; $i < $numberOfEncryptions; $i++) {
             $encrypted[$this->encryptor->encrypt($original)] = true;
         }
-        $this->assertEquals($numberOfEncryptions, count($encrypted));
+        static::assertCount($numberOfEncryptions, $encrypted);
     }
 
     /**
