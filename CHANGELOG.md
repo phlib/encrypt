@@ -6,11 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Add specific support for PHP v8.
 - Type declarations have been added to all properties, method parameters and
   return types where possible.
 ### Changed
-- Use SemVer for dependency versions. This effectively removes unintended
-  support for PHP v8, as this package has only been tested for PHP v5.4 - v7.1.
+- Use SemVer for dependency versions.
 - Use fully-qualified paths for global functions. Minor efficiency improvement
   and prevents overwriting functions critical to the encryption. 
 - **BC break**: Reduce visibility of internal methods and properties. These
