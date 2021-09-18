@@ -1,20 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlib\Encrypt;
 
 interface EncryptorInterface
 {
+    public function encrypt(string $data): string;
 
-    /**
-     * @param string $data
-     * @return string
-     */
-    public function encrypt($data);
-
-    /**
-     * @param string $data
-     * @return string
-     */
-    public function decrypt($data);
-
+    public function decrypt(string $data): string;
 }

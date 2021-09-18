@@ -1,98 +1,95 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlib\Encrypt\Test\Encryptor;
 
 use Phlib\Encrypt\Encryptor\OpenSsl;
+use Phlib\Encrypt\InvalidArgumentException;
+use Phlib\Encrypt\RuntimeException;
+use PHPUnit\Framework\TestCase;
 
-class OpenSslTest extends \PHPUnit_Framework_TestCase
+class OpenSslTest extends TestCase
 {
-    
-    /**
-     * @var OpenSsl
-     */
-    protected $encryptor;
+    private OpenSsl $encryptor;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->encryptor = new OpenSsl('abc123');
     }
 
-    public function testEncryptReturnsNonEmptyString()
+    public function testEncryptReturnsNonEmptyString(): void
     {
         $encrypted = $this->encryptor->encrypt('shoop di whoop');
-        $this->assertNotEmpty($encrypted);
+        static::assertNotEmpty($encrypted);
     }
 
-    public function testEncryptReturnsDifferentString()
+    public function testEncryptReturnsDifferentString(): void
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
-        $this->assertNotEquals($original, $encrypted);
+        static::assertNotSame($original, $encrypted);
     }
 
-    public function testDecryptReturnsOriginal()
+    public function testDecryptReturnsOriginal(): void
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         $decrypted = $this->encryptor->decrypt($encrypted);
-        $this->assertEquals($original, $decrypted);
+        static::assertSame($original, $decrypted);
     }
 
-    public function testEncryptReturnsUniqueOnMultipleCalls()
+    public function testEncryptReturnsUniqueOnMultipleCalls(): void
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = [];
         $numberOfEncryptions = 10;
         for ($i = 0; $i < $numberOfEncryptions; $i++) {
             $encrypted[$this->encryptor->encrypt($original)] = true;
         }
-        $this->assertEquals($numberOfEncryptions, count($encrypted));
+        static::assertCount($numberOfEncryptions, $encrypted);
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\InvalidArgumentException
-     * @expectedExceptionMessage Data is not valid
-     */
-    public function testDecryptFailsWithInsufficientData()
+    public function testDecryptFailsWithInsufficientData(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Data is not valid');
+
         $this->encryptor->decrypt('meugghhh');
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     */
-    public function testDecryptFailsWithGarbage()
+    public function testDecryptFailsWithGarbage(): void
     {
-        $this->encryptor->decrypt(str_repeat('meugghhh',20));
+        $this->expectException(RuntimeException::class);
+
+        $this->encryptor->decrypt(str_repeat('meugghhh', 20));
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     * @expectedExceptionMessage HMAC
-     */
-    public function testDecryptFailsWithModifiedData()
+    public function testDecryptFailsWithModifiedData(): void
     {
-        $original  = 'shoop di whoop';
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('HMAC');
+
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
 
-        $index = mt_rand(0, strlen($encrypted) - 1);
-        $encryptedModified  = substr($encrypted, 0, $index);
+        $index = random_int(0, strlen($encrypted) - 1);
+        $encryptedModified = substr($encrypted, 0, $index);
         $encryptedModified .= chr(ord(substr($encrypted, $index, 1)) + 1);
         $encryptedModified .= substr($encrypted, $index + 1);
 
         $this->encryptor->decrypt($encryptedModified);
     }
 
-    /**
-     * @expectedException \Phlib\Encrypt\RuntimeException
-     * @expectedExceptionMessage Failed to decrypt data
-     */
-    public function testDecryptFailsWithUnencryptedData()
+    public function testDecryptFailsWithUnencryptedData(): void
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to decrypt data');
+
         // This data has been built using correct HMAC, but the original data was not encrpyted
         // HMAC will pass, but openssl_decrypt() will fail
         $base64 = 'VzqOJoRMXkXT/1g3mZQ712LHXNKg5sIiVgB4zQZffOD3XOtW0yEOoRHcGheVbPMeC8N9TKRyKh1UaGlzIGRhdGEgaXMgbm90IGVuY3J5cHRlZA==';
-        $notEncrypted = base64_decode($base64);
+        $notEncrypted = base64_decode($base64, true);
 
         $this->encryptor->decrypt($notEncrypted);
     }
