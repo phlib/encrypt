@@ -22,7 +22,7 @@
         "paragonie/random_compat": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8",
+        "phpunit/phpunit": "^9",
         "symplify/easy-coding-standard": "^9"
     },
     "autoload-dev": {
