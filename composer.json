@@ -17,7 +17,7 @@
         }
     },
     "require": {
-        "php" : "^5.4 || ^7",
+        "php" : "^7.1",
         "lib-openssl": "*",
         "paragonie/random_compat": "^2.0"
     },

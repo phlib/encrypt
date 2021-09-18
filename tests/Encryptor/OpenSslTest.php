@@ -75,7 +75,7 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
         $original  = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
 
-        $index = mt_rand(0, strlen($encrypted) - 1);
+        $index = random_int(0, strlen($encrypted) - 1);
         $encryptedModified  = substr($encrypted, 0, $index);
         $encryptedModified .= chr(ord(substr($encrypted, $index, 1)) + 1);
         $encryptedModified .= substr($encrypted, $index + 1);
