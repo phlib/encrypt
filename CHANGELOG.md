@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Use SemVer for dependency versions. This effectively removes unintended
   support for PHP v8, as this package has only been tested for PHP v5.4 - v7.1.
+- Use fully-qualified paths for global functions. Minor efficiency improvement
+  and prevents overwriting functions critical to the encryption. 
 
 ## [2.0.0] - 2016-04-06
 - Use separate keys for encryption and authentication.
