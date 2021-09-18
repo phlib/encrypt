@@ -1,6 +1,6 @@
 <?php
 
-namespace library\Phlib\Encrypt\Test\Encryptor;
+namespace Phlib\Encrypt\Test\Encryptor;
 
 use Phlib\Encrypt\Encryptor\OpenSsl;
 
