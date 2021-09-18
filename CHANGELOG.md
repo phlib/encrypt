@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Type declarations have been added to all method parameters and return types
-  where possible.
+- Type declarations have been added to all properties, method parameters and
+  return types where possible.
 ### Changed
 - Use SemVer for dependency versions. This effectively removes unintended
   support for PHP v8, as this package has only been tested for PHP v5.4 - v7.1.

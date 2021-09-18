@@ -20,15 +20,9 @@ final class OpenSsl implements EncryptorInterface
 
     private const KEY_LENGTH = 16; // 128 bits
 
-    /**
-     * @var string
-     */
-    private $password;
+    private string $password;
 
-    /**
-     * @var int
-     */
-    private $ivLength; // determined from cipher method
+    private int $ivLength; // determined from cipher method
 
     public function __construct(string $password)
     {

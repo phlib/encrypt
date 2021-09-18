@@ -11,10 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class OpenSslTest extends TestCase
 {
-    /**
-     * @var OpenSsl
-     */
-    private $encryptor;
+    private OpenSsl $encryptor;
 
     protected function setUp(): void
     {
