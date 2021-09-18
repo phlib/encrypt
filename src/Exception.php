@@ -4,5 +4,4 @@ namespace Phlib\Encrypt;
 
 interface Exception
 {
-
 }

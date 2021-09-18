@@ -27,9 +27,21 @@ class OpenSsl implements EncryptorInterface
      * @var int
      */
     protected $saltLength = 8;
-    protected $ivLength   = null; // dependant on cipher method
-    protected $macLength  = 32;   // strlen(hash_hmac('sha256', '', '', true))
-    protected $keyLength  = 16;   // 128 bits
+
+    /**
+     * @var int
+     */
+    protected $ivLength; // dependant on cipher method
+
+    /**
+     * @var int
+     */
+    protected $macLength = 32; // strlen(hash_hmac('sha256', '', '', true))
+
+    /**
+     * @var int
+     */
+    protected $keyLength = 16; // 128 bits
 
     /**
      * OpenSsl constructor
@@ -49,7 +61,7 @@ class OpenSsl implements EncryptorInterface
     public function encrypt($data)
     {
         $salt = \random_bytes($this->saltLength);
-        $iv   = \random_bytes($this->ivLength);
+        $iv = \random_bytes($this->ivLength);
 
         [$encKey, $authKey] = $this->deriveKeys($salt);
 
@@ -68,9 +80,9 @@ class OpenSsl implements EncryptorInterface
         if (\strlen($data) < $this->saltLength + $this->ivLength + $this->macLength) {
             throw new InvalidArgumentException('Data is not valid for decryption');
         }
-        $salt          = \substr($data, 0, $this->saltLength);
-        $iv            = \substr($data, $this->saltLength, $this->ivLength);
-        $mac           = \substr($data, $this->saltLength + $this->ivLength, $this->macLength);
+        $salt = \substr($data, 0, $this->saltLength);
+        $iv = \substr($data, $this->saltLength, $this->ivLength);
+        $mac = \substr($data, $this->saltLength + $this->ivLength, $this->macLength);
         $encryptedData = \substr($data, $this->saltLength + $this->ivLength + $this->macLength);
 
         [$encKey, $authKey] = $this->deriveKeys($salt);
@@ -102,5 +114,4 @@ class OpenSsl implements EncryptorInterface
 
         return \str_split($key, $this->keyLength);
     }
-
 }

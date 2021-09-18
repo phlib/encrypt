@@ -4,7 +4,6 @@ namespace Phlib\Encrypt;
 
 interface EncryptorInterface
 {
-
     /**
      * @param string $data
      * @return string
@@ -16,5 +15,4 @@ interface EncryptorInterface
      * @return string
      */
     public function decrypt($data);
-
 }

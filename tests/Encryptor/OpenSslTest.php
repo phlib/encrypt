@@ -6,7 +6,6 @@ use Phlib\Encrypt\Encryptor\OpenSsl;
 
 class OpenSslTest extends \PHPUnit_Framework_TestCase
 {
-    
     /**
      * @var OpenSsl
      */
@@ -25,14 +24,14 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
 
     public function testEncryptReturnsDifferentString()
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         $this->assertNotEquals($original, $encrypted);
     }
 
     public function testDecryptReturnsOriginal()
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
         $decrypted = $this->encryptor->decrypt($encrypted);
         $this->assertEquals($original, $decrypted);
@@ -40,7 +39,7 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
 
     public function testEncryptReturnsUniqueOnMultipleCalls()
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = [];
         $numberOfEncryptions = 10;
         for ($i = 0; $i < $numberOfEncryptions; $i++) {
@@ -63,7 +62,7 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
      */
     public function testDecryptFailsWithGarbage()
     {
-        $this->encryptor->decrypt(str_repeat('meugghhh',20));
+        $this->encryptor->decrypt(str_repeat('meugghhh', 20));
     }
 
     /**
@@ -72,11 +71,11 @@ class OpenSslTest extends \PHPUnit_Framework_TestCase
      */
     public function testDecryptFailsWithModifiedData()
     {
-        $original  = 'shoop di whoop';
+        $original = 'shoop di whoop';
         $encrypted = $this->encryptor->encrypt($original);
 
         $index = random_int(0, strlen($encrypted) - 1);
-        $encryptedModified  = substr($encrypted, 0, $index);
+        $encryptedModified = substr($encrypted, 0, $index);
         $encryptedModified .= chr(ord(substr($encrypted, $index, 1)) + 1);
         $encryptedModified .= substr($encrypted, $index + 1);
 
