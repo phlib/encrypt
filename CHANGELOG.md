@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-04-06
+### Removed
+- Removed `random_compat` dependency no longer required. HT @brendt
+
 ## [3.0.0] - 2021-08-18
 ### Added
 - Add specific support for PHP v8.
